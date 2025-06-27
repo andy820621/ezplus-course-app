@@ -35,15 +35,12 @@
           </li>
         </ul>
 
-        <!-- 手機版選單 -->
         <div class="md:hidden flex items-center">
-          <!-- 漢堡選單按鈕 -->
           <button
             @click="toggleMobileMenu"
             class="text-gray-600 hover:text-blue-600 p-2 relative z-20"
             :class="{ 'text-blue-600': isMobileMenuOpen }"
           >
-            <!-- 漢堡圖示 -->
             <div class="w-6 h-6 flex flex-col justify-center items-center gap-y-1">
               <span
                 class="block w-5 h-0.5 bg-current transition-all duration-300"
@@ -62,7 +59,6 @@
         </div>
       </div>
 
-      <!-- 手機版下拉選單 -->
       <Transition
         enter-active-class="transition-all duration-300 ease-out"
         enter-from-class="opacity-0 -translate-y-2"

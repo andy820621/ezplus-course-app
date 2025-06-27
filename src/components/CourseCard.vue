@@ -1,6 +1,5 @@
 <template>
   <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
-    <!-- 課程縮圖 -->
     <div class="aspect-video relative overflow-hidden bg-gray-200">
       <img
         v-if="course.imageUrl"
@@ -17,7 +16,6 @@
           />
         </svg>
       </div>
-      <!-- 課程狀態標籤 -->
       <div class="absolute top-4 right-4">
         <span :class="statusClasses" class="px-3 py-1 rounded-full text-sm font-medium">
           {{ statusText }}
@@ -25,7 +23,6 @@
       </div>
     </div>
 
-    <!-- 課程資訊 -->
     <div class="p-6">
       <div class="mb-2!">
         <span class="text-sm text-gray-500 bg-gray-100 px-2 py-1 rounded">
@@ -41,16 +38,77 @@
         <p>年齡限制：{{ course.ageRestriction }}</p>
       </div>
 
-      <div class="flex items-center justify-between">
-        <div class="text-2xl font-bold text-blue-600">NT$ {{ course.price.toLocaleString() }}</div>
+      <div class="flex items-center justify-between gap-1 mt-8!">
+        <div class="text-xl font-bold text-blue-600">NT$ {{ course.price.toLocaleString() }}</div>
 
         <button
           @click="addToCart"
-          :disabled="!canAddToCart"
+          :disabled="!canAddToCart || isLoading || isInCart"
           :class="buttonClasses"
-          class="px-6 py-2 rounded-lg font-medium transition-colors"
+          class="px-4 py-2 rounded-lg font-medium transition-all duration-300 flex items-center gap-2 min-w-[120px] justify-center"
         >
-          {{ buttonText }}
+          <svg v-if="isLoading" class="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24">
+            <circle
+              class="opacity-25"
+              cx="12"
+              cy="12"
+              r="10"
+              stroke="currentColor"
+              stroke-width="4"
+            ></circle>
+            <path
+              class="opacity-75"
+              fill="currentColor"
+              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+            ></path>
+          </svg>
+
+          <svg
+            v-if="isSuccess"
+            class="w-4 h-4 text-white"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M5 13l4 4L19 7"
+            ></path>
+          </svg>
+
+          <svg
+            v-else-if="isInCart"
+            class="w-4 h-4 text-white"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M5 13l4 4L19 7"
+            ></path>
+          </svg>
+
+          <svg
+            v-else-if="canAddToCart"
+            class="w-4 h-4"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-1.5 6M7 13l-1.5-6m0 0h14"
+            ></path>
+          </svg>
+
+          <span>{{ buttonText }}</span>
         </button>
       </div>
     </div>
@@ -58,9 +116,10 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import type { Course } from '@/types/course'
 import { useCartStore } from '@/stores/counter'
+import { useToast } from '@/composables/useToast'
 
 interface Props {
   course: Course
@@ -68,10 +127,22 @@ interface Props {
 
 const props = defineProps<Props>()
 const cartStore = useCartStore()
+const { showSuccess, showError } = useToast()
+
+const isLoading = ref(false)
+const isSuccess = ref(false)
 
 const canAddToCart = computed(() => {
-  // 根據需求：開課狀態「尚未開始」時不能加入購物車
-  return props.course.status !== '尚未開始'
+  if (props.course.status === '尚未開始') return false
+
+  const isInCart = cartStore.items.some((item) => item.id === props.course.id)
+  if (isInCart) return false
+
+  return true
+})
+
+const isInCart = computed(() => {
+  return cartStore.items.some((item) => item.id === props.course.id)
 })
 
 const statusClasses = computed(() => {
@@ -92,6 +163,15 @@ const statusText = computed(() => {
 })
 
 const buttonClasses = computed(() => {
+  if (isSuccess.value) {
+    return 'bg-green-600 text-white cursor-default'
+  }
+  if (isInCart.value) {
+    return 'bg-gray-400 text-white cursor-default'
+  }
+  if (isLoading.value) {
+    return 'bg-blue-500 text-white cursor-wait'
+  }
   if (canAddToCart.value) {
     return 'bg-blue-600 text-white hover:bg-blue-700 cursor-pointer transition-colors'
   } else {
@@ -100,12 +180,36 @@ const buttonClasses = computed(() => {
 })
 
 const buttonText = computed(() => {
+  if (isLoading.value) return '加入中...'
+  if (isSuccess.value) return '已加入'
+  if (isInCart.value) return '已加入'
+  if (props.course.status === '尚未開始') return '尚未開始'
   return canAddToCart.value ? '加入購物車' : '無法購買'
 })
 
-function addToCart() {
-  if (canAddToCart.value) {
+async function addToCart() {
+  if (!canAddToCart.value || isLoading.value || isSuccess.value || isInCart.value) return
+
+  isLoading.value = true
+
+  try {
+    await new Promise((resolve) => setTimeout(resolve, 800))
+
+    // TODO：實際的 API 呼叫
+    // 直接加入購物車
     cartStore.addToCart(props.course)
+
+    isSuccess.value = true
+    showSuccess('加入成功！', `「${props.course.name}」已加入購物車`)
+
+    setTimeout(() => {
+      isSuccess.value = false
+    }, 1000)
+  } catch (error) {
+    showError('加入失敗', '請稍後再試')
+    console.error('Add to cart failed:', error)
+  } finally {
+    isLoading.value = false
   }
 }
 </script>

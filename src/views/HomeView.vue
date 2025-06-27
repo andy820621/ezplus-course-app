@@ -3,25 +3,41 @@
     <div class="container mx-auto px-4 py-8">
       <h1 class="text-3xl font-bold text-gray-800 mb-8!">課程列表</h1>
 
-      <!-- 載入狀態 -->
-      <div v-if="loading" class="flex justify-center items-center py-12">
+      <div v-if="loading" class="flex flex-col justify-center items-center py-12 gap-2">
         <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
         <span class="ml-3 text-gray-600">載入課程中...</span>
       </div>
 
-      <!-- 錯誤狀態 -->
       <div v-else-if="error" class="text-center py-12">
         <div class="text-red-500 text-xl mb-4!">載入課程時發生錯誤</div>
         <p class="text-gray-600 mb-6!">{{ error }}</p>
         <button
           @click="fetchCourses"
-          class="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors"
+          :disabled="loading"
+          class="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-all flex items-center gap-2"
+          :class="{ 'opacity-75 cursor-not-allowed': loading }"
         >
-          重新載入
+          <!-- Loading Icon -->
+          <svg v-if="loading" class="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24">
+            <circle
+              class="opacity-25"
+              cx="12"
+              cy="12"
+              r="10"
+              stroke="currentColor"
+              stroke-width="4"
+            ></circle>
+            <path
+              class="opacity-75"
+              fill="currentColor"
+              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+            ></path>
+          </svg>
+
+          {{ loading ? '載入中...' : '重新載入' }}
         </button>
       </div>
 
-      <!-- 課程網格 -->
       <div
         v-else-if="courses.length > 0"
         class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
@@ -29,7 +45,6 @@
         <CourseCard v-for="course in courses" :key="course.id" :course="course" />
       </div>
 
-      <!-- 無課程狀態 -->
       <EmptyState
         v-else
         icon="📚"
@@ -67,7 +82,6 @@ async function fetchCourses() {
 
     console.log({ data })
 
-    // 確保資料格式正確
     if (Array.isArray(data)) {
       courses.value = data
     } else {
@@ -77,7 +91,6 @@ async function fetchCourses() {
     console.error('載入課程失敗:', err)
     error.value = err instanceof Error ? err.message : '載入課程時發生未知錯誤'
 
-    // 如果 API 失敗，使用假資料作為展示
     courses.value = [
       {
         id: '1758051268318220289',
