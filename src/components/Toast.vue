@@ -56,7 +56,7 @@
             >
               {{ title }}
             </h4>
-            <p class="text-sm text-gray-600 mt-1" v-if="message">
+            <p class="text-sm text-gray-600 mt-1!" v-if="message">
               {{ message }}
             </p>
           </div>

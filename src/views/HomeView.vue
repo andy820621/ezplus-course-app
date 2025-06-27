@@ -5,7 +5,7 @@
 
       <div v-if="loading" class="flex flex-col justify-center items-center py-12 gap-2">
         <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-        <span class="ml-3 text-gray-600">載入課程中...</span>
+        <span class="ml-3! text-gray-600">載入課程中...</span>
       </div>
 
       <div v-else-if="error" class="text-center py-12">

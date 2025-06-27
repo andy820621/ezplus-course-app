@@ -20,7 +20,7 @@
               v-model="selection.selectAll.value"
               class="form-checkbox h-5 w-5 text-blue-600 rounded"
             />
-            <span class="ml-2 text-gray-700">全選</span>
+            <span class="ml-2! text-gray-700">全選</span>
           </label>
           <button
             v-if="selection.selectedCount.value > 0"
