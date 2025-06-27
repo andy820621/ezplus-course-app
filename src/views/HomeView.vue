@@ -1,37 +1,39 @@
 <template>
-  <div class="container mx-auto px-4 py-8">
-    <h1 class="text-3xl font-bold text-gray-800 mb-8">課程列表</h1>
+  <div class="w-screen flex justify-center">
+    <div class="container mx-auto px-4 py-8">
+      <h1 class="text-3xl font-bold text-gray-800 mb-8!">課程列表</h1>
 
-    <!-- 載入狀態 -->
-    <div v-if="loading" class="flex justify-center items-center py-12">
-      <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-      <span class="ml-3 text-gray-600">載入課程中...</span>
-    </div>
+      <!-- 載入狀態 -->
+      <div v-if="loading" class="flex justify-center items-center py-12">
+        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+        <span class="ml-3 text-gray-600">載入課程中...</span>
+      </div>
 
-    <!-- 錯誤狀態 -->
-    <div v-else-if="error" class="text-center py-12">
-      <div class="text-red-500 text-xl mb-4">載入課程時發生錯誤</div>
-      <p class="text-gray-600 mb-6">{{ error }}</p>
-      <button
-        @click="fetchCourses"
-        class="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors"
+      <!-- 錯誤狀態 -->
+      <div v-else-if="error" class="text-center py-12">
+        <div class="text-red-500 text-xl mb-4">載入課程時發生錯誤</div>
+        <p class="text-gray-600 mb-6">{{ error }}</p>
+        <button
+          @click="fetchCourses"
+          class="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors"
+        >
+          重新載入
+        </button>
+      </div>
+
+      <!-- 課程網格 -->
+      <div
+        v-else-if="courses.length > 0"
+        class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
       >
-        重新載入
-      </button>
-    </div>
+        <CourseCard v-for="course in courses" :key="course.id" :course="course" />
+      </div>
 
-    <!-- 課程網格 -->
-    <div
-      v-else-if="courses.length > 0"
-      class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
-    >
-      <CourseCard v-for="course in courses" :key="course.id" :course="course" />
-    </div>
-
-    <!-- 無課程狀態 -->
-    <div v-else class="text-center py-12">
-      <div class="text-6xl text-gray-300 mb-4">📚</div>
-      <p class="text-xl text-gray-500">目前沒有課程</p>
+      <!-- 無課程狀態 -->
+      <div v-else class="text-center py-12">
+        <div class="text-6xl text-gray-300 mb-4">📚</div>
+        <p class="text-xl text-gray-500">目前沒有課程</p>
+      </div>
     </div>
   </div>
 </template>
@@ -64,13 +66,7 @@ async function fetchCourses() {
 
     // 確保資料格式正確
     if (Array.isArray(data)) {
-      courses.value = data.map((course: Record<string, unknown>, index: number) => ({
-        id: (course.id as number) || index + 1,
-        name: (course.name as string) || (course.courseName as string) || '未命名課程',
-        status: (course.status as string) || (course.courseStatus as string) || '狀態未知',
-        thumbnail: (course.thumbnail as string) || (course.image as string) || '',
-        price: Number(course.price) || 0,
-      }))
+      courses.value = data
     } else {
       throw new Error('API 回傳的資料格式不正確')
     }
@@ -81,32 +77,48 @@ async function fetchCourses() {
     // 如果 API 失敗，使用假資料作為展示
     courses.value = [
       {
-        id: 1,
-        name: 'Vue.js 從入門到精通',
-        status: '開課中',
-        thumbnail: '',
-        price: 2999,
+        id: '1758051268318220289',
+        name: '狂美《久石讓的燦爛樂章》交響音樂會-2024再現',
+        displayCategory: '音樂',
+        imageUrl: 'https://s3.resource.opentix.life/upload/program/1710929296686xSXZ4TpVh3.jpeg',
+        startDateTime: 1720000000,
+        endDateTime: 1730000000,
+        price: 2200,
+        ageRestriction: '7歲以上',
+        status: '已開始',
       },
       {
-        id: 2,
-        name: 'React 前端開發實戰',
-        status: '即將開課',
-        thumbnail: '',
-        price: 3499,
+        id: '1784862638494830592',
+        name: '2024 馬辛－龍之聲世界巡演台灣站',
+        displayCategory: '音樂',
+        imageUrl: 'https://s3.resource.opentix.life/upload/program/1714967180923XS2gISJhI3.jpeg',
+        startDateTime: 1720000000,
+        endDateTime: 1720000000,
+        price: 2500,
+        ageRestriction: '4歲以上',
+        status: '已開始',
       },
       {
-        id: 3,
-        name: 'Node.js 後端開發',
+        id: '1783015237651550209',
+        name: '音樂劇《跑跑殭丙仁》',
+        displayCategory: '戲劇',
+        imageUrl: 'https://s3.resource.opentix.life/upload/program/1715127950033jbYDDq1I6V.jpeg',
+        startDateTime: 1720000000,
+        endDateTime: 1730000000,
+        price: 2000,
+        ageRestriction: '6歲以上',
+        status: '已結束',
+      },
+      {
+        id: '1606151416662671362',
+        name: '親子音樂劇《阿甯咕又闖禍了YA~》小兒子動畫劇場 ①',
+        displayCategory: '親子',
+        imageUrl: 'https://s3.resource.opentix.life/upload/program/17092736496549f700TXn8s.png',
+        startDateTime: 1720000000,
+        endDateTime: 1720000000,
+        price: 1600,
+        ageRestriction: '4歲以上',
         status: '尚未開始',
-        thumbnail: '',
-        price: 4999,
-      },
-      {
-        id: 4,
-        name: 'TypeScript 完整指南',
-        status: '開課中',
-        thumbnail: '',
-        price: 2499,
       },
     ]
   } finally {

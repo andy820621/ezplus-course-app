@@ -1,7 +1,7 @@
 <template>
-  <div class="min-h-screen bg-gray-50">
+  <div class="min-h-screen bg-gray-50 w-screen flex justify-center">
     <div class="container mx-auto px-4 py-8">
-      <h1 class="text-3xl font-bold text-gray-800 mb-8">購物車</h1>
+      <h1 class="text-3xl font-bold text-gray-800 mb-8!">購物車</h1>
 
       <!-- 空購物車狀態 -->
       <div v-if="cartStore.items.length === 0" class="text-center py-12">
@@ -50,9 +50,19 @@
               v-model="selectedItems"
               class="form-checkbox h-5 w-5 text-blue-600 rounded"
             />
-            <img :src="item.thumbnail" :alt="item.name" class="w-20 h-20 object-cover rounded-lg" />
+            <img
+              :src="item.imageUrl"
+              :alt="item.name"
+              class="w-20 h-20 object-cover rounded-lg bg-gray-200"
+            />
             <div class="flex-grow">
-              <h3 class="text-lg font-semibold text-gray-800">{{ item.name }}</h3>
+              <div class="mb-1">
+                <span class="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">
+                  {{ item.displayCategory }}
+                </span>
+              </div>
+              <h3 class="text-lg font-semibold text-gray-800 mb-1">{{ item.name }}</h3>
+              <p class="text-sm text-gray-600 mb-2">年齡限制：{{ item.ageRestriction }}</p>
               <p class="text-2xl font-bold text-blue-600">NT$ {{ item.price.toLocaleString() }}</p>
             </div>
             <button
@@ -99,7 +109,7 @@ import { ref, computed } from 'vue'
 import { useCartStore } from '@/stores/counter'
 
 const cartStore = useCartStore()
-const selectedItems = ref<number[]>([])
+const selectedItems = ref<string[]>([])
 
 const selectAll = computed({
   get: () => selectedItems.value.length === cartStore.items.length && cartStore.items.length > 0,

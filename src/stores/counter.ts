@@ -23,14 +23,14 @@ export const useCartStore = defineStore('cart', () => {
     }
   }
 
-  function removeFromCart(courseId: number) {
+  function removeFromCart(courseId: string) {
     const index = items.value.findIndex((item) => item.id === courseId)
     if (index > -1) {
       items.value.splice(index, 1)
     }
   }
 
-  function removeSelectedItems(selectedIds: number[]) {
+  function removeSelectedItems(selectedIds: string[]) {
     items.value = items.value.filter((item) => !selectedIds.includes(item.id))
   }
 

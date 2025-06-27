@@ -8,12 +8,19 @@ const cartStore = useCartStore()
 <template>
   <div class="min-h-screen bg-gray-50">
     <!-- 導航列 -->
-    <nav class="bg-white shadow-lg">
-      <div class="container mx-auto px-4">
+    <nav class="bg-white shadow-lg flex justify-center">
+      <div class="w-full mx-auto px-4">
         <div class="flex justify-between items-center h-16">
-          <div class="flex items-center space-x-8">
-            <h1 class="text-xl font-bold text-gray-800">課程平台</h1>
-            <div class="hidden md:flex space-x-6">
+          <!-- 左側標題 -->
+          <h1 class="text-xl font-bold text-gray-800">
+            <RouterLink to="/" class="text-gray-600 hover:text-blue-900 transition-colors">
+              課程平台
+            </RouterLink>
+          </h1>
+
+          <!-- 右側導航選單 -->
+          <ul class="hidden md:flex gap-2 list-none">
+            <li>
               <RouterLink
                 to="/"
                 class="text-gray-600 hover:text-blue-600 font-medium transition-colors"
@@ -21,6 +28,8 @@ const cartStore = useCartStore()
               >
                 課程列表
               </RouterLink>
+            </li>
+            <li>
               <RouterLink
                 to="/cart"
                 class="text-gray-600 hover:text-blue-600 font-medium transition-colors flex items-center gap-2"
@@ -34,8 +43,8 @@ const cartStore = useCartStore()
                   {{ cartStore.totalItems }}
                 </span>
               </RouterLink>
-            </div>
-          </div>
+            </li>
+          </ul>
 
           <!-- 手機版選單 -->
           <div class="md:hidden">

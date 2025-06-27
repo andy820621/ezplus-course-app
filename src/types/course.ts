@@ -1,9 +1,13 @@
 export interface Course {
-  id: number
+  id: string
   name: string
-  status: string
-  thumbnail: string
+  displayCategory: string
+  imageUrl: string
+  startDateTime: number
+  endDateTime: number
   price: number
+  ageRestriction: string
+  status: string
 }
 
 export interface CartItem extends Course {
