@@ -27,17 +27,17 @@
 
     <!-- 課程資訊 -->
     <div class="p-6">
-      <div class="mb-2">
+      <div class="mb-2!">
         <span class="text-sm text-gray-500 bg-gray-100 px-2 py-1 rounded">
           {{ course.displayCategory }}
         </span>
       </div>
 
-      <h3 class="text-xl font-semibold text-gray-800 mb-2 line-clamp-2">
+      <h3 class="text-xl font-semibold text-gray-800 mb-2! line-clamp-2">
         {{ course.name }}
       </h3>
 
-      <div class="text-sm text-gray-600 mb-4">
+      <div class="text-sm text-gray-600 mb-4!">
         <p>年齡限制：{{ course.ageRestriction }}</p>
       </div>
 
@@ -93,7 +93,7 @@ const statusText = computed(() => {
 
 const buttonClasses = computed(() => {
   if (canAddToCart.value) {
-    return 'bg-blue-600 text-white hover:bg-blue-700'
+    return 'bg-blue-600 text-white hover:bg-blue-700 cursor-pointer transition-colors'
   } else {
     return 'bg-gray-300 text-gray-500 cursor-not-allowed'
   }

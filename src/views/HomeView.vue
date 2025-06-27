@@ -11,8 +11,8 @@
 
       <!-- 錯誤狀態 -->
       <div v-else-if="error" class="text-center py-12">
-        <div class="text-red-500 text-xl mb-4">載入課程時發生錯誤</div>
-        <p class="text-gray-600 mb-6">{{ error }}</p>
+        <div class="text-red-500 text-xl mb-4!">載入課程時發生錯誤</div>
+        <p class="text-gray-600 mb-6!">{{ error }}</p>
         <button
           @click="fetchCourses"
           class="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors"
@@ -30,10 +30,12 @@
       </div>
 
       <!-- 無課程狀態 -->
-      <div v-else class="text-center py-12">
-        <div class="text-6xl text-gray-300 mb-4">📚</div>
-        <p class="text-xl text-gray-500">目前沒有課程</p>
-      </div>
+      <EmptyState
+        v-else
+        icon="📚"
+        title="目前沒有課程"
+        description="課程即將上線，請稍後再來查看"
+      />
     </div>
   </div>
 </template>
@@ -41,6 +43,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import CourseCard from '@/components/CourseCard.vue'
+import EmptyState from '@/components/EmptyState.vue'
 import type { Course } from '@/types/course'
 
 const courses = ref<Course[]>([])
